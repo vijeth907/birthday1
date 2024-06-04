@@ -1,26 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>User Response Storage</title>
-</head>
-<body>
-<h1>Enter Your Response</h1>
-<form id="responseForm">
-  <label for="userResponse">Your Response:</label><br>
-  <input type="text" id="userResponse" name="userResponse"><br><br>
-  <button type="submit">Submit</button>
-</form>
-
-<script>
-document.getElementById("responseForm").addEventListener("submit", function(event){
-  event.preventDefault();
-  var userResponse = document.getElementById("userResponse").value;
-  localStorage.setItem("userResponse", userResponse);
-  alert("Response stored successfully!");
+document.getElementById('birthdayForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const name = document.getElementById('name').value;
+    
+    // Send name to GitHub using fetch API
+    fetch('https://api.github.com/repos/your-username/your-repo/contents/names.txt', {
+        method: 'PUT',
+        headers: {
+            'Authorization': 'token YOUR_GITHUB_TOKEN',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            message: 'Add new name',
+            content: btoa(name) // encode name to base64
+        })
+    })
+    .then(response => {
+        if (response.status === 201 || response.status === 200) {
+            document.getElementById('name').value = ''; // clear input field
+            document.getElementById('thankYouMessage').style.display = 'block'; // show thank you message
+        } else {
+            alert('Error: ' + response.statusText);
+        }
+    })
+    .catch(error => console.error('Error:', error));
 });
-</script>
-
-</body>
-</html>
